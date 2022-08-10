@@ -2,16 +2,14 @@ from __future__ import annotations
 
 import random
 
-import numpy as np
-from scipy.spatial.distance import cdist
-from gtm_base import GTMBase
-
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-
-from bokeh_app import run_server
-
+from scipy.spatial.distance import cdist
 from sklearn.base import BaseEstimator
+
+from .bokeh_app import run_server
+from .gtm_base import GTMBase
 
 
 class GTMTimeSeries(GTMBase, BaseEstimator):
@@ -66,12 +64,12 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
         # Grouping latent space
         # C indicator where C_ij = 1 if state i in group j
-        num_group = self.K // (group_size**2)
+        num_group = self.K // (group_size ** 2)
         state_belonging = np.zeros(map_shape)
         cur_group = 0
         for i in range(self.k // group_size):
             for j in range(self.k // group_size):
-                state_belonging[i*group_size:(i+1)*group_size:, j*group_size:(j+1)*group_size] = cur_group
+                state_belonging[i * group_size:(i + 1) * group_size:, j * group_size:(j + 1) * group_size] = cur_group
                 cur_group += 1
         self.C = np.zeros([self.K, num_group])
         # C_ij = 1 if state i in group j
@@ -163,7 +161,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         # induction
         for t in range(1, self.seq_length):
             # alpha * Pij * C_ik * B
-            alpha[t] = alpha[t-1].dot(self.eta).dot(self.CC) * self.B[t]
+            alpha[t] = alpha[t - 1].dot(self.eta).dot(self.CC) * self.B[t]
             # alpha[t] = alpha[t-1].dot(self.P) * self.B[t]
             scale[t] = alpha[t].sum()  # set scale before normalize alpha
             alpha[t] /= alpha[t].sum()  # normalize
@@ -174,9 +172,9 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         # beta.shape = (seq_length, K)
         beta = np.zeros([self.seq_length, self.K])
 
-        beta[self.seq_length-1:, ] = 1 / scale[self.seq_length-1]
+        beta[self.seq_length - 1:, ] = 1 / scale[self.seq_length - 1]
         for t in range(self.seq_length - 2, -1, -1):
-            beta[t] = (beta[t+1] * self.B[t+1]).dot(self.CC.T).dot(self.eta.T) / scale[t]
+            beta[t] = (beta[t + 1] * self.B[t + 1]).dot(self.CC.T).dot(self.eta.T) / scale[t]
         return beta
 
     def calc_gamma(self, forward_alpha, backward_beta) -> np.ndarray:
@@ -195,11 +193,11 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         Xi_t(i, j): the prob that being in state i at time t and state j at time t+1
         """
         # this is accumulative xi.
-        self.xi += self.P *\
-                     forward_alpha[0:self.seq_length-2].T.\
-                     dot(
-                         backward_beta[1:self.seq_length-1] * self.B[1:self.seq_length-1]
-                     )
+        self.xi += self.P * \
+                   forward_alpha[0:self.seq_length - 2].T. \
+                       dot(
+                       backward_beta[1:self.seq_length - 1] * self.B[1:self.seq_length - 1]
+                   )
 
     def m_step(self) -> bool:
         """
@@ -213,9 +211,9 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         self.G = np.diag(self.gamma_sum)
 
         # update W using equation (11) from GTMTT 1998
-        for l in [self.l, self.l*10, self.l*100]:
-            A = self.phi_with_ones.T @ self.G @ self.phi_with_ones +\
-                          l * np.identity(self.phi_with_ones.shape[1])
+        for l in [self.l, self.l * 10, self.l * 100]:
+            A = self.phi_with_ones.T @ self.G @ self.phi_with_ones + \
+                l * np.identity(self.phi_with_ones.shape[1])
             try:
                 A_inv = np.linalg.pinv(A)
                 break
@@ -349,7 +347,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         max_dist = np.max(dist, axis=1)
         min_dist = np.min(dist, axis=1)
         median = (max_dist + min_dist) / 2
-        median_variant = (min_dist+600)*(2/self.beta)
+        median_variant = (min_dist + 600) * (2 / self.beta)
         dist_corr = np.minimum(median, median_variant)
         dist -= (np.ones(dist.shape).T @ np.diag(dist_corr)).T
         # emission probability B = (K*length)
@@ -459,11 +457,11 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
 if __name__ == '__main__':
     # read the same dataset from the matlab sample code
-    dta = pd.read_excel("./data/example_data.xlsx", sheet_name=0,  header=None)
+    dta = pd.read_excel("./data/example_data.xlsx", sheet_name=0, header=None)
     dta = dta.to_numpy()
     dta = dta[:, :9]  # first 9 cols
     print(dta.shape)
-    dta = dta.reshape([4, dta.shape[0]//4, 9])
+    dta = dta.reshape([4, dta.shape[0] // 4, 9])
 
     e = GTMTimeSeries(s=2, map_shape=(12, 12), group_size=2)
     e.fit(dta, epoch=30)
@@ -471,7 +469,3 @@ if __name__ == '__main__':
 
     e.plot(mode='mode')
     e.plot(mode='mean')
-
-
-
-
