@@ -6,13 +6,22 @@
 GTMX
 ================================
 
+.. note::
+   This project is under active development
+
+
+A Python package for Generative Topographic Mapping (GTM)
+
 Contents
 ---------
 .. toctree::
-   gtm
+   :maxdepth: 2
 
-.. note::
-   This project is under active development
+   install
+   gtm
+   gtmtt
+   example
+
 
 Indices and tables
 ==================
