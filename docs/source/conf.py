@@ -17,8 +17,7 @@ import pathlib
 path = pathlib.Path(__file__).resolve()
 dirname = os.path.dirname(path)
 root_path = os.path.join(dirname, '..', '..', 'src')
-sys.path.insert(0, os.path.abspath(root_path))
-print(f"path = {path}")
+sys.path.append(os.path.abspath(root_path))
 
 
 # -- Project information -----------------------------------------------------
