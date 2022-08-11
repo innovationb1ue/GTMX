@@ -1,15 +1,14 @@
-gtm
+GTM
 =====
 
 
 .. module:: gtmx
 
-Class Object
+GTM Object
 ---------------
 
 .. autoclass:: GTMBase
     :members:
-
 
 
 

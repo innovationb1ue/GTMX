@@ -1,9 +1,9 @@
-gtmtt
+GTMTT
 =======
 
-.. module:: gtmx
+.. py:currentmodule:: gtmx
 
-Class Object
+GTMTT Object
 ---------------
 
 .. autoclass:: GTMTimeSeries

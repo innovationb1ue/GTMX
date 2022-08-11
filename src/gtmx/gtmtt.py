@@ -16,7 +16,6 @@ from sklearn.base import BaseEstimator
 
 class GTMTimeSeries(GTMBase, BaseEstimator):
     """GTM model for time series or sequential data """
-    #todo: write document for the module
 
     def __init__(self, s=2, group_size=5, l=0.01,
                  map_shape: tuple = (10, 10), rbf_shape: tuple = (4, 4)):
@@ -323,8 +322,8 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
     def single_sequence_opt(self, obs: np.ndarray):
         """
-        Steps:
-        for each sequence (length, d) in the training series sets (num_obs, length, d)
+        Steps::
+
             1. calc DIST and B
             2. forward-backward
             3. gamma
