@@ -3,6 +3,8 @@
 A Python package for Generative Topographic Mapping (GTM)  
 Provide original version of GTM by Bishop et al. (1998) and GTM through time by Bishop et al. (1997). 
 
+Link to the documentation: https://gtmx.readthedocs.io/en/latest/
+
 ## Installation
 `pip install gtmx`
 
