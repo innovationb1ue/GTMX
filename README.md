@@ -6,7 +6,12 @@ Provide original version of GTM by Bishop et al. (1998) and GTM through time by 
 Link to the documentation: https://gtmx.readthedocs.io/en/latest/
 
 ## Installation
-`pip install gtmx`
+
+### pip
+`pip install gtmx`  
+### source  
+Clone the repository and cd into project root. 
+`pip install .`
 
 ## Example
 for basic GTM model
