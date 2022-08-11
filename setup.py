@@ -10,7 +10,8 @@ setup(
         'scipy',
         'scikit-learn',
         'matplotlib',
-        'bokeh'
+        'bokeh',
+        'pandas'
     ],
     long_description=open('README.rst').read()
 )
