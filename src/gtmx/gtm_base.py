@@ -65,6 +65,67 @@ class GTMBase(BaseEstimator):
         # training history
         self.llhs = []
 
+    def fit(self, x, y=None, epoch=10, early_stopping=False, tol=10):
+        """
+        train the model. y will not be used.
+        """
+        self._init_vars(x)
+        self.llhs = []
+        for epoch in range(epoch):
+            llh = self._optimize()
+            self.llhs.append(llh)
+            # early stopping when loglikelihood converged
+            if epoch >= 2 and early_stopping and abs(self.llhs[-2] - llh) < tol:
+                print("Early stopping since variance of llh is less than tol")
+                self.calibrate()
+                break
+            print(f"{epoch}: {llh}")
+        print("Done")
+
+    def calibrate(self):
+        """ calibrate the R matrix after last optimize """
+        dist = cdist(self.T, self.phi_with_ones.dot(self.W), metric='sqeuclidean')
+        exp_term: np.ndarray = np.exp((-self.beta / 2) * dist)
+        exp_term_sum_over_k = exp_term.sum(axis=1)
+        self.R: np.ndarray = (exp_term / exp_term_sum_over_k.reshape(-1, 1)).T
+
+    def plot_llh(self):
+        """Plot the training log-likelihood figure"""
+        plt.plot(self.llhs)
+        plt.title("Training Log-likelihood")
+        plt.xlabel("epoch")
+        plt.ylabel("llh")
+        plt.show()
+
+    def score(self, x):
+        dist = cdist(self.T, self.mu, metric='sqeuclidean')
+        exp_term: np.ndarray = np.exp((-self.beta / 2) * dist)
+        llh = np.log((self.beta / (2 * np.pi)) ** (self.D / 2) * exp_term.sum(axis=1) / self.K).sum()
+        return llh
+
+    def plot(self, mode='mode', label: None | np.ndarray = None, num_points=200):
+        """
+        Label is for every point and in shape of (n_points, )
+        You might want to call np.repeat(label, n) to repeat every label n times
+        """
+        plt.figure(figsize=figure.figaspect(1))
+        if mode == 'mode':
+            modes = self.map_grid[self.R.argmax(axis=0)][:num_points]
+            plt.scatter(modes[:, 0], modes[:, 1], c=label)
+            plt.ylim(-1.1, 1.1)
+            plt.xlim(-1.1, 1.1)
+            plt.xlabel("z1 (mode)")
+            plt.ylabel("z2 (mode)")
+            plt.show()
+        elif mode == 'mean':
+            means = self.R.T.dot(self.map_grid)[:num_points]
+            plt.scatter(means[:, 0], means[:, 1], c=label)
+            plt.ylim(-1.1, 1.1)
+            plt.xlim(-1.1, 1.1)
+            plt.xlabel("z1 (mean)")
+            plt.ylabel("z2 (mean)")
+            plt.show()
+
     def _init_vars(self, x: np.ndarray):
         """
         Initialize the hyperparameters related to training data.
@@ -139,75 +200,3 @@ class GTMBase(BaseEstimator):
 
         return llh
 
-    def fit(self, x, y=None, epoch=10, early_stopping=False, tol=10):
-        """
-        train the model. y will not be used.
-        """
-        self._init_vars(x)
-        self.llhs = []
-        for epoch in range(epoch):
-            llh = self._optimize()
-            self.llhs.append(llh)
-            # early stopping when loglikelihood converged
-            if epoch >= 2 and early_stopping and abs(self.llhs[-2] - llh) < tol:
-                print("Early stopping since variance of llh is less than tol")
-                self.calibrate()
-                break
-            print(f"{epoch}: {llh}")
-        print("Done")
-
-    def calibrate(self):
-        """ calibrate the R matrix after last optimize """
-        dist = cdist(self.T, self.phi_with_ones.dot(self.W), metric='sqeuclidean')
-        exp_term: np.ndarray = np.exp((-self.beta / 2) * dist)
-        exp_term_sum_over_k = exp_term.sum(axis=1)
-        self.R: np.ndarray = (exp_term / exp_term_sum_over_k.reshape(-1, 1)).T
-
-    def plot_llh(self):
-        """Plot the training log-likelihood figure"""
-        plt.plot(self.llhs)
-        plt.title("Training Log-likelihood")
-        plt.xlabel("epoch")
-        plt.ylabel("llh")
-        plt.show()
-
-    def score(self, x):
-        dist = cdist(self.T, self.mu, metric='sqeuclidean')
-        exp_term: np.ndarray = np.exp((-self.beta / 2) * dist)
-        llh = np.log((self.beta / (2 * np.pi)) ** (self.D / 2) * exp_term.sum(axis=1) / self.K).sum()
-        return llh
-
-    def plot(self, mode='mode', label: None | np.ndarray = None, num_points=200):
-        """
-        Label is for every point and in shape of (n_points, )
-        You might want to call np.repeat(label, n) to repeat every label n times
-        """
-        plt.figure(figsize=figure.figaspect(1))
-        if mode == 'mode':
-            modes = self.map_grid[self.R.argmax(axis=0)][:num_points]
-            plt.scatter(modes[:, 0], modes[:, 1], c=label)
-            plt.ylim(-1.1, 1.1)
-            plt.xlim(-1.1, 1.1)
-            plt.xlabel("z1 (mode)")
-            plt.ylabel("z2 (mode)")
-            plt.show()
-        elif mode == 'mean':
-            means = self.R.T.dot(self.map_grid)[:num_points]
-            plt.scatter(means[:, 0], means[:, 1], c=label)
-            plt.ylim(-1.1, 1.1)
-            plt.xlim(-1.1, 1.1)
-            plt.xlabel("z1 (mean)")
-            plt.ylabel("z2 (mean)")
-            plt.show()
-
-
-if __name__ == '__main__':
-    iris = load_iris()
-    X: np.ndarray = iris.data
-    Y = iris.target
-    n_obs = X.shape[0]
-    e = GTMBase(map_shape=(14, 14), rbf_shape=(4, 4), s=2, l=0.01)
-    e.fit(X, Y, epoch=50)
-    e.plot_llh()
-    e.plot(label=Y)
-    e.plot(mode='mean', label=Y)

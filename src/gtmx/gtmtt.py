@@ -456,32 +456,3 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             print('done')
         return
 
-
-if __name__ == '__main__':
-    # read the same dataset from the matlab sample code
-    dta = pd.read_excel("./data/example_data.xlsx", sheet_name=0,  header=None)
-    dta = dta.to_numpy()
-    dta = dta[:, :9]  # first 9 cols
-    print(dta.shape)
-    dta = dta.reshape([4, dta.shape[0]//4, 9])
-
-    e = GTMTimeSeries(s=2, map_shape=(12, 12), group_size=2)
-    e.fit(dta, epoch=30)
-    print("vis time")
-
-    e.plot_llh()
-    e.plot(mode='mode')
-    e.plot(mode='mean')
-
-    # print("sampling and re-training")
-    # new_dta = np.vstack([e.sample() for i in range(4)])
-    # new_dta = new_dta.reshape(-1, 9)
-    # e = GTMTimeSeries(s=2, map_shape=(12, 12), group_size=2)
-    # e.fit(new_dta, epoch=20)
-    # print("vis time")
-    #
-    # e.plot(mode='mode')
-    # e.plot(mode='mean')
-
-
-

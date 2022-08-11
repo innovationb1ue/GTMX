@@ -8,6 +8,6 @@ GTMTT Object
 
 .. autoclass:: GTMTimeSeries
     :members:
-
+    :private-members:
 
 

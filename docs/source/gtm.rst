@@ -9,8 +9,7 @@ GTM Object
 
 .. autoclass:: GTMBase
     :members:
-
-
+    :private-members:
 
 
 

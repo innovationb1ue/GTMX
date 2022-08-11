@@ -4,7 +4,7 @@ Install
 pip
 -------
 
-Install through PyPI
+Install through PIP
 
 .. code-block:: console
 
