@@ -44,6 +44,11 @@ gtm.plot('mode')
 
 ```
 
+## Main References
+Nabney, I. (2002). NETLAB: algorithms for pattern recognition. Springer Science & Business Media.  
+Bishop, C. M., Svensén, M., & Williams, C. K. (1998). GTM: The generative topographic mapping. Neural computation, 10(1), 215-234.  
+Bishop, C. M., Hinton, G. E., & Strachan, I. G. (1997). GTM through time.
+Gaspar, H. A. (2018). ugtm: A Python package for data modeling and visualization using generative topographic mapping. Journal of Open Research Software, 6(1).
 
 
 
