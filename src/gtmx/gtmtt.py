@@ -103,8 +103,8 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         self.Scale = None
 
         # in-real-time vis attrs
-        self.latent_coors = {"x": [], 'y': []}
-        self.llh_coors = {'x': [], 'y': []}
+        self.latent_coors = dict()
+        self.llh_coors = dict()
 
         # training history
         self.llhs = []
@@ -115,6 +115,9 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         projected into latent space will be displayed on that page.
 
         """
+        self.latent_coors = {"x": [], 'y': []}
+        self.llh_coors = {'x': [], 'y': []}
+
         # run data host server
         from flask import Flask
         from flask_cors import CORS
