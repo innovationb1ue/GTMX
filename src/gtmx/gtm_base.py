@@ -65,7 +65,7 @@ class GTMBase(BaseEstimator):
         # training history
         self.llhs = []
 
-    def fit(self, x, y=None, epoch=10, early_stopping=False, tol=10):
+    def fit(self, x, y=None, epoch=10, early_stopping=False, tol=10, verbose=True):
         """
         train the model. y will not be used.
         """
@@ -79,8 +79,8 @@ class GTMBase(BaseEstimator):
                 print("Early stopping since variance of llh is less than tol")
                 self.calibrate()
                 break
-            print(f"{epoch}: {llh}")
-        print("Done")
+            if verbose:
+                print(f"{epoch}: {llh}")
 
     def calibrate(self):
         """ calibrate the R matrix after last optimize """

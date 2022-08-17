@@ -7,7 +7,6 @@ from scipy.spatial.distance import cdist
 from .gtm_base import GTMBase
 
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from .bokeh_app import run_server
 
@@ -20,7 +19,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
     def __init__(self, s=2, group_size=5, l=0.01,
                  map_shape: tuple = (10, 10), rbf_shape: tuple = (4, 4)):
         """
-        Initialize the hyper parameters of GTMTT model
+        Initialize the hyperparameters of GTMTT model
 
         Note here: the n_obs is not meant to be fixed in this step. n_obs is only used to split the input data
                     into separate sequences. If you want to train the model with different size of training data,
@@ -66,12 +65,12 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
         # Grouping latent space
         # C indicator where C_ij = 1 if state i in group j
-        num_group = self.K // (group_size**2)
+        num_group = self.K // (group_size ** 2)
         state_belonging = np.zeros(map_shape)
         cur_group = 0
         for i in range(self.k // group_size):
             for j in range(self.k // group_size):
-                state_belonging[i*group_size:(i+1)*group_size:, j*group_size:(j+1)*group_size] = cur_group
+                state_belonging[i * group_size:(i + 1) * group_size:, j * group_size:(j + 1) * group_size] = cur_group
                 cur_group += 1
         self.C = np.zeros([self.K, num_group])
         # C_ij = 1 if state i in group j
@@ -166,7 +165,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         # induction
         for t in range(1, self.seq_length):
             # alpha * Pij * C_ik * B
-            alpha[t] = alpha[t-1].dot(self.eta).dot(self.CC) * self.B[t]
+            alpha[t] = alpha[t - 1].dot(self.eta).dot(self.CC) * self.B[t]
             # alpha[t] = alpha[t-1].dot(self.P) * self.B[t]
             scale[t] = alpha[t].sum()  # set scale before normalize alpha
             alpha[t] /= alpha[t].sum()  # normalize
@@ -177,9 +176,9 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         # beta.shape = (seq_length, K)
         beta = np.zeros([self.seq_length, self.K])
 
-        beta[self.seq_length-1:, ] = 1 / scale[self.seq_length-1]
+        beta[self.seq_length - 1:, ] = 1 / scale[self.seq_length - 1]
         for t in range(self.seq_length - 2, -1, -1):
-            beta[t] = (beta[t+1] * self.B[t+1]).dot(self.CC.T).dot(self.eta.T) / scale[t]
+            beta[t] = (beta[t + 1] * self.B[t + 1]).dot(self.CC.T).dot(self.eta.T) / scale[t]
         return beta
 
     def calc_gamma(self, forward_alpha, backward_beta) -> np.ndarray:
@@ -193,16 +192,16 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         gamma /= gamma.sum(axis=1)[:, None]
         return gamma
 
-    def calc_xi(self, forward_alpha, backward_beta):
+    def calc_xi(self, forward_alpha, backward_beta) -> np.ndarray:
         """
         Xi_t(i, j): the prob that being in state i at time t and state j at time t+1
         """
         # this is accumulative xi.
-        self.xi += self.P *\
-                     forward_alpha[0:self.seq_length-2].T.\
-                     dot(
-                         backward_beta[1:self.seq_length-1] * self.B[1:self.seq_length-1]
-                     )
+        xi = self.P * forward_alpha[0:self.seq_length - 2].T. \
+            dot(
+            backward_beta[1:self.seq_length - 1] * self.B[1:self.seq_length - 1]
+        )
+        return xi
 
     def m_step(self) -> bool:
         """
@@ -214,20 +213,20 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         # gamma = responsibilities
         # G = col wise sum of gamma
         self.G = np.diag(self.gamma_sum)
-
+        a_inv = None
         # update W using equation (11) from GTMTT 1998
-        for l in [self.l, self.l*10, self.l*100]:
-            A = self.phi_with_ones.T @ self.G @ self.phi_with_ones +\
-                          l * np.identity(self.phi_with_ones.shape[1])
+        for l in [self.l, self.l * 10, self.l * 100]:
+            A = self.phi_with_ones.T @ self.G @ self.phi_with_ones + \
+                l * np.identity(self.phi_with_ones.shape[1])
             try:
-                A_inv = np.linalg.pinv(A)
+                a_inv = np.linalg.pinv(A)
                 break
             except np.linalg.LinAlgError:
                 continue
         else:
             print("Failed to inverse the Phi^T*G*Phi matrix.")
             return False
-        self.W = A_inv @ self.phi_with_ones.T @ self.RT
+        self.W = a_inv @ self.phi_with_ones.T @ self.RT
         # new projection into data space
         mu = self.phi_with_ones.dot(self.W)
 
@@ -263,9 +262,10 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             self.refresh_intermediates()
             for t in self.data_series:
                 self.single_sequence_opt(t)  # a single gamma is appended to self.gammas
-
             flag = self.m_step()
-
+            if not flag:
+                print("Optimize failed. Due to failure in M-step. ")
+                break
             llh = self.Scale.sum()
             self.llhs.append(llh)
             if self.latent_coors:
@@ -277,9 +277,6 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
                 self.llh_coors = {'x': [*range(len(self.llhs))], 'y': self.llhs}
             if verbose:
                 print(f"epoch: {epoch}, llh = {llh}")
-            if not flag:
-                print("Optimize failed. Due to failure in M-step. ")
-                break
             # early stopping
             if early_stopping and epoch >= 2 and abs(self.llhs[-2] - llh) < tol:
                 break
@@ -352,7 +349,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         max_dist = np.max(dist, axis=1)
         min_dist = np.min(dist, axis=1)
         median = (max_dist + min_dist) / 2
-        median_variant = (min_dist+600)*(2/self.beta)
+        median_variant = (min_dist + 600) * (2 / self.beta)
         dist_corr = np.minimum(median, median_variant)
         dist -= (np.ones(dist.shape).T @ np.diag(dist_corr)).T
         # emission probability B = (K*length)
@@ -375,7 +372,8 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         self.Pi_sum += gamma[0]
 
         # STEP 4: xi
-        self.calc_xi(forward_alpha, backward_beta)
+        xi = self.calc_xi(forward_alpha, backward_beta)
+        self.xi += xi
 
         # STEP 5: add single time series scale to batch scale
         self.Scale += np.log(scale) - dist_corr * (self.beta / 2)
@@ -458,4 +456,3 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             plt.show()
             print('done')
         return
-
