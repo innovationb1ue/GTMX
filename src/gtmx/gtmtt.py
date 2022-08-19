@@ -457,12 +457,16 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             if quiver:
                 ax.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1], scale_units='xy', angles='xy', scale=1)
             ax.scatter(x, y)
+            plt.xlabel("z1 (mode)")
+            plt.ylabel("z2 (mode)")
             plt.show()
         elif mode == 'mean':
             points = gamma.dot(self.map_grid)
             x = points[:, 0]
             y = points[:, 1]
             ax.scatter(x, y)
+            plt.xlabel("z1 (mean)")
+            plt.ylabel("z2 (mean)")
             plt.show()
             print('done')
         elif mode == 'hot':
