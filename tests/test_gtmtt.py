@@ -16,6 +16,7 @@ def test_gtmtt():
     e.plot_llh()
     e.plot(mode='mode')
     e.plot(mode='mean')
+    e.plot(mode='hot')
 
 
 def test_heat_map(gtmtt: GTMTimeSeries):

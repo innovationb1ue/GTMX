@@ -109,6 +109,9 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         # training history
         self.llhs = []
 
+        # plot cache
+        self.plot_sample_idx = None
+
     def start_vis_server(self):
         """
         If called before training, a browser will be started and a sample of time series
@@ -425,6 +428,12 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         states = np.array(states)
         return states
 
+    def new_plot_sample(self):
+        """Randomly draw a new sample for plots"""
+        data_idx = [i for i in range(self.data_series.shape[0])]
+        sample_idx = random.choices(data_idx, k=1)[0]
+        self.plot_sample_idx = sample_idx
+
     def plot(self, mode='mode', labels: np.ndarray = np.array([]), quiver=False, **kwargs):
         """
         Plot a random time series sample into the latent space
@@ -436,9 +445,10 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             quiver: shows the trajectory of latent space
         """
         # sample from data
-        data_idx = [i for i in range(self.data_series.shape[0])]
-        sample_idx = random.choices(data_idx, k=1)
-        gamma = np.array(self.gammas)[sample_idx[0]]
+        if not self.plot_sample_idx:
+            print(f"Plot sample not set. Randomly drawing one sample from data series")
+            self.new_plot_sample()
+        gamma = np.array(self.gammas)[self.plot_sample_idx]
         fg, ax = plt.subplots(1, 1)
         if mode == 'mode':
             points = self.map_grid[gamma.argmax(axis=1)]
@@ -465,11 +475,12 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             # normalization
             for k, v in latent_dict.items():
                 latent_dict[k] = latent_dict[k] / self.seq_length
+            # todo: figure out the exact order of coors
             vals = latent_dict.values()
             freqs = np.array(list(vals)).reshape([self.k, self.k])
             freqs = np.rot90(freqs)
             fig, ax = plt.subplots()
-            im = ax.imshow(freqs)
+            im = plt.imshow(freqs)
             # Loop over data dimensions and create text annotations.
             latent_counts = np.ceil(freqs*self.seq_length).astype(int)
             for i in range(self.k):
@@ -477,4 +488,3 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
                     text = ax.text(j, i, latent_counts[i, j],
                                    ha="center", va="center", color="w")
             plt.show()
-
