@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 from .bokeh_app import run_server
 
+from collections import defaultdict
 from sklearn.base import BaseEstimator
 
 
@@ -424,35 +425,56 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         states = np.array(states)
         return states
 
-    def plot(self, mode='mode', labels: np.ndarray = np.array([]), **kwargs):
+    def plot(self, mode='mode', labels: np.ndarray = np.array([]), quiver=False, **kwargs):
         """
-        mode = 'mean' or ''mode
+        Plot a random time series sample into the latent space
+
+        Parameters
+        -----------
+            mode: 'mean' or 'mode' for two kinds of posterior
+            labels: current not useful
+            quiver: shows the trajectory of latent space
         """
         # sample from data
         data_idx = [i for i in range(self.data_series.shape[0])]
-        sample_idx = random.choices(data_idx, k=4)
-        if labels.any():
-            plot_label = labels[sample_idx]
-        else:
-            plot_label = np.array([None] * 4)
-        gammas = np.array(self.gammas)[sample_idx]
-        fg, axis = plt.subplots(2, 2)
-
+        sample_idx = random.choices(data_idx, k=1)
+        gamma = np.array(self.gammas)[sample_idx[0]]
+        fg, ax = plt.subplots(1, 1)
         if mode == 'mode':
-            for g, ax, l in zip(gammas, axis.flatten(), plot_label):
-                points = self.map_grid[g.argmax(axis=1)]
-                x = points[:, 0]
-                y = points[:, 1]
+            points = self.map_grid[gamma.argmax(axis=1)]
+            x = points[:, 0]
+            y = points[:, 1]
+            if quiver:
                 ax.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1], scale_units='xy', angles='xy', scale=1)
-                ax.scatter(x, y)
-                ax.set_title(l)
+            ax.scatter(x, y)
             plt.show()
         elif mode == 'mean':
-            for g, ax in zip(gammas, axis.flatten()):
-                points = g.dot(self.map_grid)
-                x = points[:, 0]
-                y = points[:, 1]
-                ax.scatter(x, y)
+            points = gamma.dot(self.map_grid)
+            x = points[:, 0]
+            y = points[:, 1]
+            ax.scatter(x, y)
             plt.show()
             print('done')
-        return
+        elif mode == 'hot':
+            points = self.map_grid[gamma.argmax(axis=1)]
+            latent_dict = defaultdict(int)
+            for p in self.map_grid:
+                latent_dict[tuple(p.tolist())] = 0
+            for x, y in points:
+                latent_dict[tuple([x, y])] += 1
+            # normalization
+            for k, v in latent_dict.items():
+                latent_dict[k] = latent_dict[k] / self.seq_length
+            vals = latent_dict.values()
+            freqs = np.array(list(vals)).reshape([self.k, self.k])
+            freqs = np.rot90(freqs)
+            fig, ax = plt.subplots()
+            im = ax.imshow(freqs)
+            # Loop over data dimensions and create text annotations.
+            latent_counts = np.ceil(freqs*self.seq_length).astype(int)
+            for i in range(self.k):
+                for j in range(self.k):
+                    text = ax.text(j, i, latent_counts[i, j],
+                                   ha="center", va="center", color="w")
+            plt.show()
+

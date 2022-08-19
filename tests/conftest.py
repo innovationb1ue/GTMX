@@ -15,6 +15,7 @@ def original_gtm():
     e.fit(X, Y, epoch=50)
     return e
 
+
 @pytest.fixture()
 def gtmtt():
     iris = load_iris()
