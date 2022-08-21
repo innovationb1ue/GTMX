@@ -14,6 +14,8 @@ from .bokeh_app import run_server
 from collections import defaultdict
 from sklearn.base import BaseEstimator
 
+from types import NoneType
+
 
 class GTMTimeSeries(GTMBase, BaseEstimator):
     """GTM model for time series or sequential data """
@@ -431,7 +433,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
     def new_plot_sample(self, index=None):
         """Randomly draw a new sample for plots or manually set the sample index"""
-        if index:
+        if type(index) != NoneType:
             self.plot_sample_idx = index
         else:
             data_idx = [i for i in range(self.data_series.shape[0])]
