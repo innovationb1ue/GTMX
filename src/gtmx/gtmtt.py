@@ -429,11 +429,14 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         states = np.array(states)
         return states
 
-    def new_plot_sample(self):
-        """Randomly draw a new sample for plots"""
-        data_idx = [i for i in range(self.data_series.shape[0])]
-        sample_idx = random.choices(data_idx, k=1)[0]
-        self.plot_sample_idx = sample_idx
+    def new_plot_sample(self, index=None):
+        """Randomly draw a new sample for plots or manually set the sample index"""
+        if index:
+            self.plot_sample_idx = index
+        else:
+            data_idx = [i for i in range(self.data_series.shape[0])]
+            sample_idx = random.choices(data_idx, k=1)[0]
+            self.plot_sample_idx = sample_idx
 
     def plot(self, mode='mode', labels: np.ndarray = np.array([]), quiver=False, **kwargs):
         """
@@ -482,7 +485,6 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             # normalization
             for k, v in latent_dict.items():
                 latent_dict[k] = latent_dict[k] / self.seq_length
-            # todo: figure out the exact order of coors
             vals = latent_dict.values()
             freqs = np.array(list(vals)).reshape([self.k, self.k])
             freqs = np.rot90(freqs)
