@@ -449,7 +449,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             quiver: shows the trajectory of latent space
         """
         # sample from data
-        if not isinstance(self.plot_sample_idx, type(None)):
+        if isinstance(self.plot_sample_idx, type(None)):
             print(f"Plot sample not set. Randomly drawing one sample from data series")
             self.new_plot_sample()
         gamma = self.gammas[self.plot_sample_idx]
