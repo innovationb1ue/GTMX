@@ -7,6 +7,7 @@ from scipy.spatial.distance import cdist
 from .gtm_base import GTMBase
 
 import matplotlib.pyplot as plt
+import matplotlib.figure as figure
 
 from .bokeh_app import run_server
 
@@ -449,7 +450,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             print(f"Plot sample not set. Randomly drawing one sample from data series")
             self.new_plot_sample()
         gamma = np.array(self.gammas)[self.plot_sample_idx]
-        fg, ax = plt.subplots(1, 1)
+        plt.figure(figsize=figure.figaspect(1))
         plt.ylim(-1.1, 1.1)
         plt.xlim(-1.1, 1.1)
         if mode == 'mode':
@@ -457,8 +458,8 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             x = points[:, 0]
             y = points[:, 1]
             if quiver:
-                ax.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1], scale_units='xy', angles='xy', scale=1)
-            ax.scatter(x, y)
+                plt.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1], scale_units='xy', angles='xy', scale=1)
+            plt.scatter(x, y)
             plt.xlabel("z1 (mode)")
             plt.ylabel("z2 (mode)")
             plt.show()
@@ -466,7 +467,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             points = gamma.dot(self.map_grid)
             x = points[:, 0]
             y = points[:, 1]
-            ax.scatter(x, y)
+            plt.scatter(x, y)
             plt.xlabel("z1 (mean)")
             plt.ylabel("z2 (mean)")
             plt.show()
