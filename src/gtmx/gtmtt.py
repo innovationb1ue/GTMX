@@ -450,6 +450,8 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             self.new_plot_sample()
         gamma = np.array(self.gammas)[self.plot_sample_idx]
         fg, ax = plt.subplots(1, 1)
+        plt.ylim(-1.1, 1.1)
+        plt.xlim(-1.1, 1.1)
         if mode == 'mode':
             points = self.map_grid[gamma.argmax(axis=1)]
             x = points[:, 0]

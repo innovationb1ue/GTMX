@@ -109,19 +109,17 @@ class GTMBase(BaseEstimator):
         You might want to call np.repeat(label, n) to repeat every label n times
         """
         plt.figure(figsize=figure.figaspect(1))
+        plt.ylim(-1.1, 1.1)
+        plt.xlim(-1.1, 1.1)
         if mode == 'mode':
             modes = self.map_grid[self.R.argmax(axis=0)][:num_points]
             plt.scatter(modes[:, 0], modes[:, 1], c=label)
-            plt.ylim(-1.1, 1.1)
-            plt.xlim(-1.1, 1.1)
             plt.xlabel("z1 (mode)")
             plt.ylabel("z2 (mode)")
             plt.show()
         elif mode == 'mean':
             means = self.R.T.dot(self.map_grid)[:num_points]
             plt.scatter(means[:, 0], means[:, 1], c=label)
-            plt.ylim(-1.1, 1.1)
-            plt.xlim(-1.1, 1.1)
             plt.xlabel("z1 (mean)")
             plt.ylabel("z2 (mean)")
             plt.show()
