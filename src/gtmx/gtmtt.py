@@ -14,8 +14,6 @@ from .bokeh_app import run_server
 from collections import defaultdict
 from sklearn.base import BaseEstimator
 
-from types import NoneType
-
 
 class GTMTimeSeries(GTMBase, BaseEstimator):
     """GTM model for time series or sequential data """
@@ -433,7 +431,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
     def new_plot_sample(self, index=None):
         """Randomly draw a new sample for plots or manually set the sample index"""
-        if type(index) != NoneType:
+        if not isinstance(index, type(None)):
             self.plot_sample_idx = index
         else:
             data_idx = [i for i in range(self.data_series.shape[0])]
@@ -454,7 +452,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
         if not self.plot_sample_idx:
             print(f"Plot sample not set. Randomly drawing one sample from data series")
             self.new_plot_sample()
-        gamma = np.array(self.gammas)[self.plot_sample_idx]
+        gamma = self.gammas[self.plot_sample_idx]
         plt.figure(figsize=figure.figaspect(1))
         plt.ylim(-1.1, 1.1)
         plt.xlim(-1.1, 1.1)
@@ -493,7 +491,7 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
             fig, ax = plt.subplots()
             im = plt.imshow(freqs)
             # Loop over data dimensions and create text annotations.
-            latent_counts = np.ceil(freqs*self.seq_length).astype(int)
+            latent_counts = np.ceil(freqs * self.seq_length).astype(int)
             for i in range(self.k):
                 for j in range(self.k):
                     text = ax.text(j, i, latent_counts[i, j],
