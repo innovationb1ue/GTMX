@@ -4,6 +4,7 @@ import numpy as np
 from src.gtmx import GTMBase
 from src.gtmx import GTMTimeSeries
 import pytest
+import pandas as pd
 
 
 @pytest.fixture()
@@ -27,5 +28,11 @@ def gtmtt():
     return e
 
 
-
-
+@pytest.fixture()
+def example_data():
+    dta = pd.read_excel("../data/example_data.xlsx", sheet_name=0, header=None)
+    dta = dta.to_numpy()
+    dta = dta[:, :9]  # first 9 cols
+    print(dta.shape)
+    dta = dta.reshape([4, dta.shape[0] // 4, 9])
+    return dta

@@ -19,7 +19,6 @@ dirname = os.path.dirname(path)
 root_path = os.path.join(dirname, '..', '..', 'src')
 sys.path.append(os.path.abspath(root_path))
 
-
 # -- Project information -----------------------------------------------------
 import os.path
 import sys
@@ -30,7 +29,6 @@ author = 'Zhuofan Zhong'
 
 # The full version, including alpha/beta/rc tags
 release = 'v0.0.3'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -46,7 +44,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
 
 # -- Options for HTML output -------------------------------------------------
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.spatial.distance import cdist
-from sklearn.datasets import load_iris
 from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import euclidean_distances
 
@@ -25,6 +24,7 @@ class GTMBase(BaseEstimator):
     :param rbf_shape: The shape of radial basis function grid.
     :param pca: Flag for using PCA to initialize weights W.
     """
+
     def __init__(self, s=2, l=0.001, map_shape=(16, 16), rbf_shape=(5, 5), pca=True):
         # hyper parameters
         self.l = l  # regularization parameter lambda, larger l can avoid singularity
@@ -197,4 +197,3 @@ class GTMBase(BaseEstimator):
         self.mu = self.phi_with_ones.dot(self.W)
 
         return llh
-

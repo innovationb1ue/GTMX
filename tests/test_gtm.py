@@ -12,4 +12,3 @@ def test_gtm_base():
     e.plot_llh()
     e.plot(label=Y)
     e.plot(mode='mean', label=Y)
-
