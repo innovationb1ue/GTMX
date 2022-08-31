@@ -440,13 +440,12 @@ class GTMTimeSeries(GTMBase, BaseEstimator):
 
     def plot(self, mode='mode', labels: np.ndarray = np.array([]), quiver=False, **kwargs):
         """
-        Plot a random time series sample into the latent space
-
+        Plot a random time series sample into the latent space.
         Parameters
-        -----------
-            mode: 'mean' or 'mode' for two kinds of posterior
-            labels: current not useful
-            quiver: shows the trajectory of latent space
+        --------------
+        mode: 'mean' or 'mode' for two kinds of posterior
+        labels: current not useful
+        quiver: shows the trajectory of latent space
         """
         # sample from data
         if isinstance(self.plot_sample_idx, type(None)):
