@@ -18,6 +18,8 @@ path = pathlib.Path(__file__).resolve()
 dirname = os.path.dirname(path)
 root_path = os.path.join(dirname, '..', '..', 'src')
 sys.path.append(os.path.abspath(root_path))
+root_path = os.path.join(dirname, '..', 'src')
+sys.path.append(os.path.abspath(root_path))
 
 # -- Project information -----------------------------------------------------
 import os.path
@@ -28,14 +30,14 @@ copyright = '2022, Zhuofan Zhong'
 author = 'Zhuofan Zhong'
 
 # The full version, including alpha/beta/rc tags
-release = 'v0.0.3'
+release = 'v0.0.5'
 
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['myst_parser', 'sphinx.ext.autodoc', 'matplotlib.sphinxext.plot_directive']
+extensions = ['myst_parser', 'sphinx.ext.autodoc', 'matplotlib.sphinxext.plot_directive', 'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
