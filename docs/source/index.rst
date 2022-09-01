@@ -15,10 +15,23 @@ A Python package for Generative Topographic Mapping (GTM)
 Contents
 ---------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :caption: Installation
 
    install
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Objects
+
    gtm
    gtmtt
-   example
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Examples
+
+   /gtm_examples/iris
+   /auto_examples/plot_gtm_iris
+   /gtmtt_examples/custom
 

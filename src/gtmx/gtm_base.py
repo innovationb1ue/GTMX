@@ -173,7 +173,8 @@ class GTMBase(BaseEstimator, TransformerMixin):
 
         Parameters
         =============
-        x : training data in shape (n_obs, dim)
+        x : np.ndarray
+            training data in shape (n_obs, dim)
 
         """
         # data related fixed parameters
