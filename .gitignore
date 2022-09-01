@@ -157,3 +157,4 @@ cython_debug/
 #.idea/
 /docs/warnings.txt
 /docs/source/auto_examples/
+docs/.DS_Store

@@ -2,3 +2,5 @@ myst-parser
 furo
 matplotlib
 scikit-learn
+sphinx-gallery
+
