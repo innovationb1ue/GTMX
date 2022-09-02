@@ -2,14 +2,9 @@
 Artificial S-curve visualization
 ====================================
 """
-import matplotlib.pyplot as plt
-from ugtm import eGTM,eGTR
-import numpy as np
 import altair as alt
 import pandas as pd
 from sklearn import datasets
-from sklearn import metrics
-from sklearn import model_selection
 from sklearn import manifold
 from gtmx import GTMBase
 
@@ -57,24 +52,6 @@ gtm_means = alt.Chart(dgtm_means).mark_circle().encode(
     tooltip=['x1','x2','label:Q']
 ).properties(title = "GTM (means)", width = 100, height = 100)
 
-#Construct activity landscape
-gtr = eGTR(m=2)
-gtr = gtr.fit(X,y)
-
-dfclassmap = pd.DataFrame(gtr.optimizedModel.matX, columns=["x1", "x2"])
-dfclassmap["label"] = gtr.node_label
-
-# Classification map
-gtr = alt.Chart(dfclassmap).mark_square().encode(
-    x='x1',
-    y='x2',
-    color=alt.Color('label:Q',
-                    scale=alt.Scale(scheme='viridis')),
-    size=alt.value(50),
-    tooltip=['x1','x2', 'label:Q'],
-    #opacity='density'
-).properties(title = "GTM landscape",width = 100, height = 100)
-
 dtsne = pd.DataFrame(tsne, columns=["x1", "x2"])
 dmds = pd.DataFrame(mds, columns=["x1", "x2"])
 dlle = pd.DataFrame(lle, columns=["x1", "x2"])
@@ -100,19 +77,7 @@ mds = alt.Chart(dmds).mark_circle().encode(
     tooltip=['x1','x2','label:Q']
 ).properties(title = "MDS", width = 100, height = 100)
 
-lle = alt.Chart(dlle).mark_circle().encode(
-    x='x1',
-    y='x2',
-    color=alt.Color('label:Q',
-                    scale=alt.Scale(scheme='viridis')),
-    size=alt.value(50),
-    tooltip=['x1','x2','label:Q']
-).properties(title = "LLE", width = 100, height = 100)
-
-
-gtm = gtm_means | gtm_modes | gtr
-others = tsne | mds | lle
+gtm = gtm_means | gtm_modes
+others = tsne | mds
 
 alt.vconcat(gtm, others)
-
-plt.show()
