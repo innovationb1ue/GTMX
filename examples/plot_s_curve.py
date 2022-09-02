@@ -2,11 +2,12 @@
 Artificial S-curve visualization
 ====================================
 """
-import altair as alt
 import pandas as pd
 from sklearn import datasets
 from sklearn import manifold
 from gtmx import GTMBase
+
+import matplotlib.pyplot as plt
 
 
 X,y = datasets.make_s_curve(n_samples=1000, random_state=0)
@@ -31,26 +32,18 @@ gtm_modes = gtm.fit_transform(X)
 dgtm_modes = pd.DataFrame(gtm_modes, columns=["x1", "x2"])
 dgtm_modes["label"] = y
 
-gtm_modes = alt.Chart(dgtm_modes).mark_circle().encode(
-    x='x1',
-    y='x2',
-    color=alt.Color('label:Q',
-                    scale=alt.Scale(scheme='viridis')),
-    size=alt.value(50),
-    tooltip=['x1','x2','label:Q']
-).properties(title = "GTM (modes)", width = 100, height = 100)
+
+fig, axs = plt.subplots(2, 2, constrained_layout=True)
+
+
+axs[0, 0].scatter(dgtm_modes['x1'], dgtm_modes['x2'])
+axs[0, 0].set_title('gtm modes')
 
 dgtm_means = pd.DataFrame(gtm_means, columns=["x1", "x2"])
 dgtm_means["label"] = y
 
-gtm_means = alt.Chart(dgtm_means).mark_circle().encode(
-    x='x1',
-    y='x2',
-    color=alt.Color('label:Q',
-                    scale=alt.Scale(scheme='viridis')),
-    size=alt.value(50),
-    tooltip=['x1','x2','label:Q']
-).properties(title = "GTM (means)", width = 100, height = 100)
+axs[0, 1].scatter(dgtm_means['x1'], dgtm_means['x2'])
+axs[0, 1].set_title('gtm means')
 
 dtsne = pd.DataFrame(tsne, columns=["x1", "x2"])
 dmds = pd.DataFrame(mds, columns=["x1", "x2"])
@@ -59,25 +52,15 @@ dtsne["label"] = y
 dmds["label"] = y
 dlle["label"] = y
 
-tsne = alt.Chart(dtsne).mark_circle().encode(
-    x='x1',
-    y='x2',
-    color=alt.Color('label:Q',
-                    scale=alt.Scale(scheme='viridis')),
-    size=alt.value(50),
-    tooltip=['x1','x2','label:Q']
-).properties(title = "t-SNE", width = 100, height = 100)
 
-mds = alt.Chart(dmds).mark_circle().encode(
-    x='x1',
-    y='x2',
-    color=alt.Color('label:Q',
-                    scale=alt.Scale(scheme='viridis')),
-    size=alt.value(50),
-    tooltip=['x1','x2','label:Q']
-).properties(title = "MDS", width = 100, height = 100)
+axs[1, 0].scatter(dtsne['x1'], dtsne['x2'])
+axs[1, 0].set_title('t-SNE')
 
-gtm = gtm_means | gtm_modes
-others = tsne | mds
+axs[1, 1].scatter(dmds['x1'], dmds['x2'])
+axs[1, 1].set_title('MDS')
 
-alt.vconcat(gtm, others)
+
+plt.show()
+
+
+
