@@ -108,7 +108,7 @@ class GTMBase(BaseEstimator, TransformerMixin):
 
         """
         mu = self.phi_with_ones @ self.W
-        dist = cdist(mu, x, metric='sqeuclidean')
+        dist = cdist(x, mu, metric='sqeuclidean')
         exp_term: np.ndarray = np.exp((-self.beta / 2) * dist)
         # sum_k(p(tn|xk, W, beta))  (size=n)
         exp_term_sum_over_k = exp_term.sum(axis=1)

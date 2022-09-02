@@ -3,4 +3,6 @@ furo
 matplotlib
 scikit-learn
 sphinx-gallery
+sphinx-design
+pydata-sphinx-theme
 

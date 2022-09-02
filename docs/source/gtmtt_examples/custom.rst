@@ -1,7 +1,7 @@
-GTMTT Examples
-=================
+GTMTT custom dataset example
+=============================
 
-Custom Dataset
+example code
 -------------------
 
 .. code-block:: python

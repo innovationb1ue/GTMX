@@ -39,7 +39,7 @@ release = 'v0.0.5'
 # ones.
 extensions = ['myst_parser', 'sphinx.ext.autodoc',
               'matplotlib.sphinxext.plot_directive', 'sphinx.ext.napoleon',
-              'sphinx_gallery.gen_gallery']
+              'sphinx_gallery.gen_gallery', 'sphinx_design']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -54,12 +54,19 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'furo'
+html_theme = 'pydata_sphinx_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ['_static']
+html_css_files = ["style.css"]
+
+html_context = {"default_mode": "light"}
+html_use_modindex = True
+html_copy_source = False
+html_domain_indices = False
+html_file_suffix = '.html'
 
 sphinx_gallery_conf = {
     'examples_dirs': "../../examples",   # path to example scripts
