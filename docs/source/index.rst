@@ -48,29 +48,61 @@ Include GTM and GTM through time.
 
          To API Documentation
 
+   .. grid-item-card::
+      :img-top: ./_static/adventure-relaxation-shelter-svgrepo-com.svg
+
+      Examples
+      ^^^^^^^^^^^^^
+
+      Get hand dirty with examples.
+
+      +++
+      .. button-ref:: example
+         :expand:
+         :color: secondary
+         :click-parent:
+
+         To examples
+
+   .. grid-item-card::
+      :img-top: ./_static/adventure-binoculars-military-svgrepo-com.svg
+
+      References
+      ^^^^^^^^^^^^^
+
+      Algorithm & paper references
+
+      +++
+      .. button-ref:: reference
+         :expand:
+         :color: secondary
+         :click-parent:
+
+         To References
+
 .. toctree::
    :maxdepth: 1
    :caption: Get Started
+   :hidden:
 
    beginner
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Installation
-
-   install
 
 .. toctree::
    :maxdepth: 1
    :caption: APIs
+   :hidden:
 
    api
 
 .. toctree::
    :maxdepth: 1
-   :caption: Examples
+   :hidden:
 
-   /auto_examples/plot_gtm_iris
-   /auto_examples/plot_s_curve
-   GTMTT custom example </gtmtt_examples/custom>
+   example
 
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   reference
