@@ -68,6 +68,11 @@ html_copy_source = False
 html_domain_indices = False
 html_file_suffix = '.html'
 
+html_theme_options = {
+  "github_url": "https://github.com/innovationb1ue/GTMX"
+}
+
+
 sphinx_gallery_conf = {
     'examples_dirs': "../../examples",   # path to example scripts
     'gallery_dirs': 'auto_examples',  # path to save temp generated outputs
